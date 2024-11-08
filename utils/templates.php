@@ -13,7 +13,7 @@ function renderHeader($title = "Moderato - faster Allegro") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>$title</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://www.google.com/recaptcha/enterprise.js?render=6LehA3QqAAAAAMrMdc554YLmQHRqNUprhO_AbbEy"></script>
+    <script src="https://www.google.com/recaptcha/enterprise.js?render=SITE_KEY"></script>
 
     <script src='./js/search.js'></script>
     <link rel="stylesheet" href="/css/styles.css">
