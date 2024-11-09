@@ -18,70 +18,40 @@ if (isset($_GET['search'])) {
     $search_term = $_GET['search'];
 }
 
-// Jeśli jest wyszukiwanie, wywołaj wyszukiwanie z bazy danych
-if (!empty($search_term)) {
-    $search_sql = "SELECT * FROM products WHERE prodName LIKE ?";
-    $stmt = $conn->prepare($search_sql);
-    $search_value = "%" . $search_term . "%";
-    $stmt->bind_param("s", $search_value);
-    $stmt->execute();
-    $search_result = $stmt->get_result();
-    $stmt->close();
+$recommended_sql = "SELECT * FROM products LIMIT 4";
+$recommended_result = $conn->query($recommended_sql);
+if (!$recommended_result) {
+    die("Query failed: " . $conn->error);
 }
 
 renderHeader("Moderato - Home");
 
-if (!empty($search_term)) {
-    // Jeśli jest wyszukiwanie, wyświetl wyniki
-    if ($search_result->num_rows > 0) {
-        echo "<h2>Wyniki wyszukiwania dla: " . htmlspecialchars($search_term) . "</h2>";
-        echo "<ul>";
-        while ($row = $search_result->fetch_assoc()) {
-            echo "<li><a href='product.php?id=" . htmlspecialchars($row["id"]) . "'>" . 
-                 htmlspecialchars($row["prodName"]) . " - " . 
-                 htmlspecialchars($row["price"]) . " PLN</a></li>";
+// Query to get distinct categories and join with the categories table
+$categories_sql = "SELECT DISTINCT c.id, c.catName FROM categories c 
+                    JOIN products p ON c.id = p.category";
+$categories_result = $conn->query($categories_sql);
+if (!$categories_result) {
+    die("Query failed: " . $conn->error);
+}
+
+if ($categories_result->num_rows > 0) {
+    while ($category_row = $categories_result->fetch_assoc()) {
+        $category_id = $category_row['id'];
+        $category_name = $category_row['catName'];
+
+        $products_sql = "SELECT * FROM products WHERE category = '$category_id'";
+        $products_result = $conn->query($products_sql);
+        if (!$products_result) {
+            echo "<p>Error fetching products for category '" . htmlspecialchars($category_name) . "': " . $conn->error . "</p>";
+            continue;
         }
-        echo "</ul>";
-    } else {
-        echo "<p>Brak produktów odpowiadających zapytaniu.</p>";
+
+        renderProductList($category_name, $products_result);
     }
 } else {
-    // Jeśli nie ma wyszukiwania, wyświetl rekomendowane produkty i kategorie
-    $recommended_sql = "SELECT * FROM products LIMIT 4";
-    $recommended_result = $conn->query($recommended_sql);
-    if (!$recommended_result) {
-        die("Query failed: " . $conn->error);
-    }
-
-
-    // Query to get categories
-    $categories_sql = "SELECT DISTINCT c.id, c.catName FROM categories c 
-                        JOIN products p ON c.id = p.category";
-    $categories_result = $conn->query($categories_sql);
-    if (!$categories_result) {
-        die("Query failed: " . $conn->error);
-    }
-
-    if ($categories_result->num_rows > 0) {
-        // Wyświetlanie produktów według kategorii
-        while ($category_row = $categories_result->fetch_assoc()) {
-            $category_id = $category_row['id'];
-            $category_name = $category_row['catName'];
-
-            $products_sql = "SELECT * FROM products WHERE category = '$category_id'";
-            $products_result = $conn->query($products_sql);
-            if (!$products_result) {
-                echo "<p>Error fetching products for category '" . htmlspecialchars($category_name) . "': " . $conn->error . "</p>";
-                continue;
-            }
-
-            renderProductList($category_name, $products_result);
-        }
-    } else {
-        echo "<p>Brak kategorii produktów.</p>";
-    }
+    echo "<p>No categories found.</p>";
 }
 
 renderFooter();
-$conn->close();
+$conn->close(); 
 ?>
