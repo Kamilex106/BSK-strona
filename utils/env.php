@@ -23,5 +23,7 @@ $dbHost = getenv('DB_HOST');
 $dbUser = getenv('DB_USER');
 $dbPass = getenv('DB_PASS');
 $dbName = getenv('DB_NAME');
+$captchaKey = getenv('CAPTCHA_KEY');
+$captchaSecret = getenv('CAPTCHA_SECRET');
 
 ?>

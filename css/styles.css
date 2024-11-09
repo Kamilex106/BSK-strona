@@ -55,6 +55,7 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 40px;
 }
 
 header h1 {
@@ -71,9 +72,17 @@ header h1 a:visited {
     color: white;
 }
 
+header > a {
+    color: white;
+    text-decoration: none;
+    font-weight: 700;
+}
+
 nav {
     display: flex;
     align-items: center;
+    flex-grow: 1;
+    justify-content: end;
 }
 
 #search {
@@ -111,10 +120,10 @@ nav {
     padding: 8px 12px;
     border-bottom: 1px solid #eee;
     cursor: pointer;
-    white-space: nowrap;        /* Prevent text from wrapping */
-    overflow: hidden;           /* Hide overflow text */
-    text-overflow: ellipsis;    /* Show ellipsis for overflowed text */
-    max-width: 200px;          /* Set a maximum width for the item */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
 }
 
 #search-results li:hover {
@@ -198,16 +207,27 @@ h2 {
 
 /* Footer */
 footer {
-    background-color: #333; /* Same as header for consistency */
+    background-color: #333;
     color: #fff;
-    text-align: center; /* Center the text */
-    padding: 20px; /* Space around the content */
-    position: relative; /* Ensure it doesn't overlap with main content */
-    margin-top: 40px; /* Space above the footer */
-    clear: both; /* Clear floats */
+    text-align: center;
+    padding: 20px;
+    position: relative;
+    margin-top: 40px;
+    clear: both;
 }
 
 footer p {
-    margin: 0; /* Remove default margin */
-    font-size: 0.9em; /* Slightly smaller font size */
+    margin: 0;
+    font-size: 0.9em;
+}
+
+/* Form */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    border: 2px solid #ddd;
+    padding: 15px;
+    margin-top: 15px;
+    border-radius: 8px;
 }

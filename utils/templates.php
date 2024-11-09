@@ -4,7 +4,11 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+include_once 'env.php';
+
 function renderHeader($title = "Moderato - faster Allegro") {
+    global $captchaKey;
+    
     echo <<<HTML
 <!DOCTYPE html>
 <html lang='pl'>
@@ -13,21 +17,18 @@ function renderHeader($title = "Moderato - faster Allegro") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>$title</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://www.google.com/recaptcha/enterprise.js?render=SITE_KEY"></script>
-
-    <script src='./js/search.js'></script>
+    <script src='./js/search.js' ></script>
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://www.google.com/recaptcha/api.js?render=$captchaKey"></script>
 </head>
 <body>
     <header>
         <h1><a href='index.php'>Moderato</a></h1>
+        <a href="about.php">About us</a>
         <nav>
-            <!-- Formularz wyszukiwania -->
-            <form action="index.php" method="get">
-                <input type="text" name="search" id="search" placeholder="Search..." value="">
-                <button type="submit">Szukaj</button>
-            </form>
+            <input type="text" id="search" placeholder="Search...">
+            <div id="search-results"></div>  
             <a href="#" id="user-icon"><i class="fa fa-user"></i></a>
         </nav>
     </header>  
@@ -46,6 +47,8 @@ function renderFooter() {
 </html>
 HTML;
 }
+
+
 
 function renderProductList($category_name, $products) {
         // Display the category name
