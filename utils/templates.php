@@ -21,6 +21,11 @@ function renderHeader($title = "Moderato - faster Allegro") {
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <script src="https://www.google.com/recaptcha/api.js?render=$captchaKey"></script>
+    <script>
+        if (navigator.webdriver && !window.location.href.includes('/bot-detected.php')) {
+            window.location.href = "/bot-detected.php"
+        }
+    </script>
 </head>
 <body>
     <header>
