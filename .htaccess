@@ -4,7 +4,7 @@ RewriteEngine On
 
 
 # Blokuj dostęp do plików konfiguracyjnych
-<FilesMatch "(\.htaccess|\.htpasswd|wp-config\.php|config\.php)">
+<FilesMatch "(\.htaccess|\.htpasswd|wp-config\.php|config\.php|\.env)">
     Order Allow,Deny
     Deny from all
 </FilesMatch>
