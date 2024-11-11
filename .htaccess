@@ -21,7 +21,6 @@ RewriteRule \.(jpg|jpeg|png|gif|bmp)$ - [F,NC,L]
 
 <IfModule mod_headers.c>
     Header set X-XSS-Protection "1; mode=block"
-    Header set Content-Security-Policy "default-src 'self'"
     Header always append X-Frame-Options DENY
     Header set X-Content-Type-Options nosniff
 </IfModule>
