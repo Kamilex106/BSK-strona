@@ -25,5 +25,6 @@ $dbPass = getenv('DB_PASS');
 $dbName = getenv('DB_NAME');
 $captchaKey = getenv('CAPTCHA_KEY');
 $captchaSecret = getenv('CAPTCHA_SECRET');
-
+$analyticsId = getenv('ANALYTICS_ID');
+$secure = (getenv('SECURE') == 'true') ? true : false;
 ?>

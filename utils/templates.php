@@ -7,8 +7,8 @@ error_reporting(E_ALL);
 include_once 'env.php';
 
 function renderHeader($title = "Moderato - faster Allegro") {
-    global $captchaKey;
-    
+    global $captchaKey, $analyticsId, $secure;
+
     echo <<<HTML
 <!DOCTYPE html>
 <html lang='pl'>
@@ -21,25 +21,35 @@ function renderHeader($title = "Moderato - faster Allegro") {
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <script src="https://www.google.com/recaptcha/api.js?render=$captchaKey"></script>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-*********"></script>
-    <script>
-     window.dataLayer = window.dataLayer || [];
-     function gtag(){dataLayer.push(arguments);}
-     gtag('js', new Date());
+HTML;
 
-    gtag('config', 'G-********');
-    </script>
+    if ($secure) echo <<<HTML
     <script>
-        if (navigator.webdriver && !window.location.href.includes('/bot-detected.php')) {
-            window.location.href = "/bot-detected.php"
+        if ((
+            navigator.webdriver ||
+            window.outerWidth == 0 ||
+            window.outerHeight == 0) &&
+            !window.location.href.includes('/honeypot.php')
+        ) {
+            window.location.href = "/honeypot.php"
         }
+    </script>
+HTML;
+    echo <<<HTML
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=$analyticsId"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', '$analyticsId');
     </script>
 </head>
 <body>
     <header>
         <h1><a href='index.php'>Moderato</a></h1>
         <a href="about.php">About us</a>
+        <a href="humans.php">Humans only</a>
         <nav>
             <input type="text" id="search" placeholder="Search...">
             <div id="search-results"></div>  
@@ -56,6 +66,7 @@ function renderFooter() {
 </main>
 <footer>
     <p>&copy; 2024 Moderato</p>
+    <a href='honeypot.php' class='hidden-link'>90% sale!</a>
 </footer>
 </body>
 </html>
