@@ -1,29 +1,56 @@
-# Włączenie modułu Rewrite (jeśli jest obsługiwany)
-<IfModule mod_rewrite.c>
 RewriteEngine On
 
 
-# Blokuj dostęp do plików konfiguracyjnych
-<FilesMatch "(\.htaccess|\.htpasswd|wp-config\.php|config\.php|\.env)">
+# Hide info about server
+Header unset X-Powered-By
+ServerSignature Off
+
+
+# Allow access to /utils/contact.php & /utils/search.php
+RewriteCond %{REQUEST_URI} !^/utils/contact\.php$
+RewriteCond %{REQUEST_URI} !^/utils/search\.php$
+
+# Deny access to everything else in /utils
+RewriteRule ^utils/ - [F,L]
+
+<FilesMatch "(\.htaccess|\.htpasswd|\.env)">
     Order Allow,Deny
     Deny from all
 </FilesMatch>
 
+# Block common scraping bots by User-Agent, whole list on: https://www.useragentstring.com/pages/useragentstring.php?typ=Crawler
+SetEnvIf User-Agent "libwww" block_bot
+SetEnvIf User-Agent "HTTrack" block_bot
+SetEnvIf User-Agent "wget" block_bot
+SetEnvIf User-Agent "curl" block_bot
+SetEnvIf User-Agent "Scrapy" block_bot
+SetEnvIf User-Agent "python-requests" block_bot
+# SetEnvIf User-Agent "(Bot|bot)" block_bot
+SetEnvIf User-Agent "(Crawler|crawler)" block_bot
+SetEnvIf User-Agent "HeadlessChrome" block_bot
+SetEnvIf User-Agent "Headless" block_bot
 
-RewriteCond %{HTTP_USER_AGENT} (bot|crawler|spider|Yandex|MJ12bot|AhrefsBot|Baiduspider|SemrushBot|DotBot|BLEXBot) [NC]
-RewriteRule .* - [F,L]
-
-# Zabezpieczenie przed hotlinkowaniem (blokowanie zewnętrznych stron)
-RewriteCond %{HTTP_REFERER} !^https?://(www\.)?kamilex106\.pl [NC]
-RewriteCond %{HTTP_REFERER} !^$
-RewriteRule \.(jpg|jpeg|png|gif|bmp)$ - [F,NC,L]
+Order Deny,Allow
+Deny from env=block_bot
 
 
-<IfModule mod_headers.c>
-    Header set X-XSS-Protection "1; mode=block"
-    Header always append X-Frame-Options DENY
-    Header set X-Content-Type-Options nosniff
-</IfModule>
+# CORS & Referer rules for search.php
+<IfModule mod_rewrite.c>
+    RewriteEngine On
 
+    # Ustawienie zmiennej środowiskowej dla domeny (niezależne od nazwy domeny)
+    RewriteCond %{HTTP_HOST} ^(www\.)?([a-z0-9.-]+) [NC]
+    RewriteRule ^ - [E=MYDOMAIN:%2]
 
+    # Konfiguracja CORS z dynamiczną domeną
+    Header set Access-Control-Allow-Origin "https://%{MYDOMAIN}e"
+    Header set Access-Control-Allow-Methods "GET, POST, OPTIONS"
+
+    # Sprawdzanie Referer
+    <Files "search.php">
+        SetEnvIf Referer "^https://(www\.)?%{MYDOMAIN}e" allowed_referer
+        Order Deny,Allow
+        Deny from all
+        Allow from env=allowed_referer
+    </Files>
 </IfModule>
