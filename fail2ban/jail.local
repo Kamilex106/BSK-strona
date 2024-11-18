@@ -1,0 +1,15 @@
+[honeypot]
+enabled = true
+port = http,https
+filter = honeypot
+logpath = /var/www/kamilex106_access.log
+maxretry = 1
+bantime = 3600
+
+[robots]
+enabled = true
+port = http,https
+filter = robots
+logpath = /var/www/kamilex106_access.log
+maxretry = 1
+bantime = 3600
